@@ -6,6 +6,16 @@ on:
   pull_request:
     branches: [ "main", "master" ]
 
+env:
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: delivery_variant12_test
+  DB_USER: delivery_student
+  DB_PASSWORD: "12345"
+  SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/delivery_variant12_test
+  SPRING_DATASOURCE_USERNAME: delivery_student
+  SPRING_DATASOURCE_PASSWORD: "12345"
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -14,9 +24,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: delivery_variant12_test
+          POSTGRES_USER: delivery_student
+          POSTGRES_PASSWORD: "12345"
         ports:
           - 5432:5432
         options: >-
@@ -45,10 +55,8 @@ jobs:
       - name: Step 3 - Start App & Run Integration/API Tests
         run: |
           mvn spring-boot:run &
-          
           sleep 15
-          
-          mvn test -Dtest=DeliveryIntegrationTest,ShipmentApiTest
+          mvn test -Dtest=*IntegrationTest,*ApiTest
 
       - name: Step 4 - Save Test Reports as Artifacts
         if: always()
