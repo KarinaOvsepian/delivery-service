@@ -54,14 +54,16 @@ jobs:
         run: |
           PGPASSWORD="12345" psql -h localhost -U delivery_student -d delivery_variant12_test -f migrations/V1__create_tables.sql
 
-      - name: Step 3 - Run Unit Tests
-        run: mvn test -Dtest=*UnitTest
+      - name: Step 3 - Run Unit & Integration Tests
+        run: mvn test -Dtest=*UnitTest,DeliveryIntegrationTest,ShippingIntegrationTest,ApiDeliveryIntegrationTest
 
-      - name: Step 4 - Start App & Run Integration/API Tests
+      - name: Step 4 - Run API Tests against Live App
         run: |
           mvn spring-boot:run &
+          APP_PID=$!
           sleep 15
-          mvn test -Dtest=*IntegrationTest,*ApiTest
+          mvn test -Dtest=ShipmentApiTest
+          kill $APP_PID || true
 
       - name: Step 5 - Save Test Reports as Artifacts
         if: always()

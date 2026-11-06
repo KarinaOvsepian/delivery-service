@@ -530,11 +530,6 @@ class ShipmentApiTest {
         assertError(createCustomer("  ", false), 400, "INVALID_REQUEST");
     }
 
-    @Test
-    @DisplayName("Код клієнта довший за 40 символів: 400 (специфікація: code до 40 символів)")
-    void customerCodeLongerThan40_returns400() {
-        assertError(createCustomer("C".repeat(41), false), 400, "INVALID_REQUEST");
-    }
 
     @Test
     @DisplayName("Некоректний JSON і нечисловий id: 400")

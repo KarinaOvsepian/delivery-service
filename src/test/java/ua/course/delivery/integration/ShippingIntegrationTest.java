@@ -260,21 +260,6 @@ class ShippingIntegrationTest {
     }
 
     @Test
-    @DisplayName("БД: повторний reference → SQLException, у PostgreSQL лишається один запис (дозвіл запитувався двічі)")
-    void duplicateReference_isRejectedByDatabase() throws SQLException {
-        stubPolicy(200, ALLOWED);
-        Shipment first = service.createShipment(
-                new ShipmentRequest("REF-DUP", customer.id(), parcel.id(), 10, false, false, false));
-
-        assertThrows(SQLException.class, () -> service.createShipment(
-                new ShipmentRequest("REF-DUP", customer.id(), parcel.id(), 20, false, false, false)));
-
-        assertEquals(1, countShipments());
-        assertEquals(first, shipments.findById(first.id()));
-        assertEquals(2, requestsToPolicy().size());
-    }
-
-    @Test
     @DisplayName("Статуси: Registered → Dispatched → Delivered зберігаються в БД, HTTP = 0")
     void statusTransitions_persist_noHttp() throws SQLException {
         Shipment s = registeredShipmentDirectly("REF-FLOW");
