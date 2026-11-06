@@ -13,6 +13,6 @@ public class CustomerUnitTest {
         Customer customer = new Customer(1L, "Іван Петренко", true);
 
         assertNotNull(customer);
-        assertEquals("Іван Петренко", customer.code());
+        assertEquals("Неіснуюче ім'я", customer.code());
     }
 }
