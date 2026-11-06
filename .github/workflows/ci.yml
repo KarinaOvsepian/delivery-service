@@ -1,0 +1,38 @@
+name: Java CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Step 1 - Build project
+        run: mvn clean compile -DskipTests
+
+      - name: Step 2 - Run Unit Tests
+        run: mvn test -Dtest=*UnitTest
+
+      - name: Step 3 - Run Integration & API Tests
+        run: mvn test -Dtest=*IntegrationTest,*ApiTest
+
+      - name: Step 4 - Save Test Reports as Artifacts
+        if: always() # Виконується завжди, навіть якщо тести впали
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-test-reports
+          path: target/surefire-reports/
