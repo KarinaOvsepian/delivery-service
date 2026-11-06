@@ -27,6 +27,7 @@ jobs:
           POSTGRES_DB: delivery_variant12_test
           POSTGRES_USER: delivery_student
           POSTGRES_PASSWORD: "12345"
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: >-
@@ -49,16 +50,20 @@ jobs:
       - name: Step 1 - Build project
         run: mvn clean compile -DskipTests
 
-      - name: Step 2 - Run Unit Tests
+      - name: Step 2 - Apply Database Migrations
+        run: |
+          PGPASSWORD="12345" psql -h localhost -U delivery_student -d delivery_variant12_test -f migrations/V1__create_tables.sql
+
+      - name: Step 3 - Run Unit Tests
         run: mvn test -Dtest=*UnitTest
 
-      - name: Step 3 - Start App & Run Integration/API Tests
+      - name: Step 4 - Start App & Run Integration/API Tests
         run: |
           mvn spring-boot:run &
           sleep 15
           mvn test -Dtest=*IntegrationTest,*ApiTest
 
-      - name: Step 4 - Save Test Reports as Artifacts
+      - name: Step 5 - Save Test Reports as Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
