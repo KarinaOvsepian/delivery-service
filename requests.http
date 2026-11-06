@@ -1,0 +1,49 @@
+### 1. Створення замовника (Customer)
+POST http://localhost:8080/customers
+Content-Type: application/json
+
+{
+  "code": "CUST-001",
+  "regular": true
+}
+
+> {%
+    client.global.set("customerId", response.body.id);
+%}
+
+### 2. Створення посилки (Parcel)
+POST http://localhost:8080/parcels
+Content-Type: application/json
+
+{
+  "code": "PARCEL-001",
+  "weightGrams": 1500,
+  "declaredValue": 500,
+  "fragile": false
+}
+
+> {%
+    client.global.set("parcelId", response.body.id);
+%}
+
+### 3. Створення відправлення (Shipment)
+### 3. Створення відправлення (Shipment)
+POST http://localhost:8080/shipments
+Content-Type: application/json
+
+{
+  "customerId": {{customerId}},
+  "parcelId": {{parcelId}},
+  "reference": "REF-12345",
+  "distanceKm": 10,
+  "urgent": false,
+  "pickup": true,
+  "couponValid": false
+}
+
+> {%
+    client.global.set("shipmentId", response.body.id);
+%}
+
+### 4. Отримання статусу відправлення (GET Shipment)
+GET http://localhost:8080/shipments/{{shipmentId}}
